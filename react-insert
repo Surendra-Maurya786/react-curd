@@ -1,0 +1,123 @@
+import { useState, useContext } from "react";
+import { AppContext } from "../Context";
+const Form1 = () => {
+
+  const { insertUser } = useContext(AppContext);
+  const [newUser, setNewUser] = useState({});
+
+
+ // Storing the Insert User Form Data.
+ const addNewUser = (e, field) => {
+  setNewUser({
+    ...newUser,
+    [field]: e.target.value,
+  });
+  console.log(e.target.value)
+};
+  // Inserting a new user into the Database.
+const submitUser = (e) => {
+  e.preventDefault();
+  insertUser(newUser);
+
+  e.target.reset();
+};
+
+ 
+
+
+    return (  
+        <div>
+
+<form className="insertForm"  onSubmit={submitUser}>
+    <h2>Insert User</h2>
+    <label htmlFor="fname">FName</label>
+    <input
+      type="text"
+      id="fname"
+
+        onChange={(e) => addNewUser(e, "fname")}
+     
+      placeholder="Enter name"
+      autoComplete="off"
+      required
+    />
+      <label htmlFor="lname">LName</label>
+      <input
+        type="text"
+        id="lname"
+          onChange={(e) => addNewUser(e, "lname")}
+        placeholder="Enter email"
+        autoComplete="off"
+        required
+      />
+       
+      <input type="submit" value="Insert" />
+    </form>
+            
+            
+        </div>
+     );
+}
+ 
+export default Form1;
+
+
+
+
+
+
+import { useEffect, useState } from "react";
+
+export const Insert = () => {
+
+
+  let [users, setUsers] = useState([]);
+
+    //userLength is for showing the Data Loading message.
+
+
+  useEffect(() => {
+    fetch("http://localhost/php-react/load.php")
+      .then((res) => {
+        return res.json();
+        
+      })
+      .then((data) => {
+        if (data.success) {
+          setUsers(data.users.reverse());
+          console.log(data)
+        
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
+
+  // Inserting a new user into the database.
+  const insertUser = (newUser) => {
+    fetch("http://localhost/php-react/insert.php", {
+      method: "POST",     
+      body: JSON.stringify(newUser),
+    })
+    console.log(newUser)
+            
+   };
+
+ 
+  return {
+    users,
+    
+    
+    insertUser
+   
+ 
+   
+  };
+};
+ 
+
+
+
+
